@@ -1,8 +1,11 @@
-import "./bootstrap";
-import Alpine from "alpinejs";
-import persist from "@alpinejs/persist"; // 1. Import plugin persist
+import './bootstrap';
 
+import Alpine from 'alpinejs';
+import persist from '@alpinejs/persist';
+
+// Plugin persist untuk menyimpan state sidebar ke localStorage
+Alpine.plugin(persist);
+
+// Start Alpine
 window.Alpine = Alpine;
-
-Alpine.plugin(persist); // 2. Daftarkan plugin SEBELUM Alpine.start()
 Alpine.start();

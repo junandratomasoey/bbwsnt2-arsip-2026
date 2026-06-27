@@ -100,7 +100,7 @@ class ProjectController extends Controller
     private function validateProject(Request $request, ?string $exceptId = null): array
     {
         return $request->validate([
-            'project_code'       => "nullable|string|max:30|unique:projects,project_code,{$exceptId}",
+            'project_code'       => [\Illuminate\Validation\Rule::unique('projects', 'project_code')->when($exceptId, fn($r) => $r->ignore($exceptId))],
             'nama'               => 'required|string|max:255',
             'deskripsi'          => 'nullable|string',
             'jenis'              => 'required|in:pembangunan,rehabilitasi,peningkatan,operasi_pemeliharaan,studi_perencanaan,pengawasan,lainnya',
@@ -108,7 +108,7 @@ class ProjectController extends Controller
             'unit_kerja_id'      => 'required|exists:unit_kerja,id',
             'ppk_id'             => 'nullable|exists:unit_kerja,id',
             'lifecycle_phase'    => 'required|in:perencanaan,pengadaan,pelaksanaan,serah_terima_1,pemeliharaan,serah_terima_2,selesai,dibatalkan',
-            'no_kontrak'         => "nullable|string|max:100|unique:projects,no_kontrak,{$exceptId}",
+            'no_kontrak'         => ['nullable', 'string', 'max:100', \Illuminate\Validation\Rule::unique('projects', 'no_kontrak')->when($exceptId, fn($r) => $r->ignore($exceptId))],
             'kontraktor'         => 'nullable|string|max:255',
             'konsultan_pengawas' => 'nullable|string|max:255',
             'tahun_anggaran'     => 'required|integer|min:2000|max:' . (now()->year + 1),

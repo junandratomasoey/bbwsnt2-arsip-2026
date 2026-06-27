@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use App\Models\Concerns\HasPostgresArrays;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class KnowledgeArticle extends Model
 {
-    use HasUuid, SoftDeletes;
+    use HasUuid, SoftDeletes, HasPostgresArrays;
     protected $table = 'knowledge_articles';
     protected $fillable = [
         'judul','slug','tipe','category_id',
@@ -23,13 +24,14 @@ class KnowledgeArticle extends Model
         'tags','metadata',
         'author_id','reviewer_id',
     ];
+    protected array $pgArrayColumns = ['tags'];
+
     protected function casts(): array
     {
         return [
             'published_at'  => 'datetime',
             'reviewed_at'   => 'datetime',
             'is_featured'   => 'boolean',
-            'tags'          => 'array',
             'metadata'      => 'array',
         ];
     }

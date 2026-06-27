@@ -1,38 +1,55 @@
-{{-- resources/views/components/stat-card.blade.php --}}
-@props(['label', 'value', 'icon', 'color' => 'sky', 'sub' => null, 'href' => null, 'trend' => null])
+{{-- components/stat-card.blade.php --}}
+@props(['label', 'value', 'icon', 'color' => 'blue', 'sub' => null, 'href' => null])
+
 @php
 $colorMap = [
-    'sky'    => ['bg' => 'bg-sky-50',    'border' => 'border-sky-100',   'icon' => 'text-sky-600',    'val' => 'text-sky-700'],
-    'green'  => ['bg' => 'bg-emerald-50','border' => 'border-emerald-100','icon' => 'text-emerald-600','val' => 'text-emerald-700'],
-    'amber'  => ['bg' => 'bg-amber-50',  'border' => 'border-amber-100', 'icon' => 'text-amber-600',  'val' => 'text-amber-700'],
-    'red'    => ['bg' => 'bg-red-50',    'border' => 'border-red-100',   'icon' => 'text-red-600',    'val' => 'text-red-700'],
-    'purple' => ['bg' => 'bg-purple-50', 'border' => 'border-purple-100','icon' => 'text-purple-600', 'val' => 'text-purple-700'],
-    'slate'  => ['bg' => 'bg-slate-50',  'border' => 'border-slate-200', 'icon' => 'text-slate-500',  'val' => 'text-slate-700'],
+    'sky'    => ['#EBF5FF', '#003366', '#1A5276'],
+    'blue'   => ['#EBF5FF', '#003366', '#1A5276'],
+    'green'  => ['#EDFAF1', '#1E8449', '#27AE60'],
+    'emerald'=> ['#EDFAF1', '#1E8449', '#27AE60'],
+    'red'    => ['#FDEDEC', '#B03A2E', '#E74C3C'],
+    'amber'  => ['#FEF9E7', '#9A7D0A', '#D4AC0D'],
+    'yellow' => ['#FEF9E7', '#9A7D0A', '#F4A81D'],
+    'purple' => ['#F5EEF8', '#6C3483', '#9B59B6'],
+    'slate'  => ['#F2F3F4', '#34495E', '#566573'],
+    'teal'   => ['#E8F8F5', '#0E6655', '#17A589'],
 ];
-$c = $colorMap[$color] ?? $colorMap['sky'];
-$tag = $href ? 'a' : 'div';
+$c = $colorMap[$color] ?? $colorMap['blue'];
+$bgLight   = $c[0];
+$textDark  = $c[1];
+$textMid   = $c[2];
 @endphp
 
-<{{ $tag }} {{ $href ? "href={$href}" : '' }}
-    class="bg-white border border-slate-200 rounded-xl p-5 flex items-start gap-4
-           {{ $href ? 'hover:border-sky-200 hover:shadow-sm transition-all cursor-pointer' : '' }}">
-    <div class="flex-shrink-0 w-11 h-11 rounded-xl {{ $c['bg'] }} border {{ $c['border'] }}
-                flex items-center justify-center">
-        <i class="ti {{ $icon }} text-xl {{ $c['icon'] }}"></i>
+@if($href)
+<a href="{{ $href }}" class="block group">
+@else
+<div>
+@endif
+
+<div class="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-md transition-all duration-200
+            group-hover:border-slate-300"
+     style="border-left: 3px solid {{ $textMid }}">
+    <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1.5 truncate">
+                {{ $label }}
+            </p>
+            <p class="text-2xl font-bold leading-none" style="color: {{ $textDark }}">
+                {{ $value }}
+            </p>
+            @if($sub)
+            <p class="text-xs text-slate-400 mt-1.5 truncate">{{ $sub }}</p>
+            @endif
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+             style="background: {{ $bgLight }}">
+            <i class="ti {{ $icon }} text-xl" style="color: {{ $textMid }}"></i>
+        </div>
     </div>
-    <div class="min-w-0 flex-1">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">{{ $label }}</p>
-        <p class="text-2xl font-semibold text-slate-800 mt-1">{{ $value }}</p>
-        @if($sub)
-        <p class="text-xs text-slate-400 mt-1">{{ $sub }}</p>
-        @endif
-    </div>
-    @if($trend !== null)
-    <div class="flex-shrink-0 text-right">
-        <span class="text-xs {{ $trend >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-            <i class="ti {{ $trend >= 0 ? 'ti-trending-up' : 'ti-trending-down' }}"></i>
-            {{ abs($trend) }}%
-        </span>
-    </div>
-    @endif
-</{{ $tag }}>
+</div>
+
+@if($href)
+</a>
+@else
+</div>
+@endif

@@ -142,8 +142,13 @@ class AssetController extends Controller
 
     private function validateAsset(Request $request, ?string $exceptId = null): array
     {
+        $assetCodeRule = \Illuminate\Validation\Rule::unique('assets', 'asset_code');
+        if ($exceptId) {
+            $assetCodeRule = $assetCodeRule->ignore($exceptId);
+        }
+
         return $request->validate([
-            'asset_code'         => "nullable|string|max:30|unique:assets,asset_code,{$exceptId}",
+            'asset_code'         => ['nullable', 'string', 'max:30', $assetCodeRule],
             'nama'               => 'required|string|max:255',
             'deskripsi'          => 'nullable|string',
             'asset_type_id'      => 'required|exists:asset_types,id',

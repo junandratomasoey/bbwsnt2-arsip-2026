@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use App\Models\Concerns\HasPostgresArrays;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class LibraryItem extends Model
 {
-    use HasUuid, SoftDeletes;
+    use HasUuid, SoftDeletes, HasPostgresArrays;
     protected $table = 'library_items';
     protected $fillable = [
         'kode_item','judul','judul_singkat','tipe',
@@ -20,6 +21,8 @@ class LibraryItem extends Model
         'stok_fisik','stok_dipinjam','ada_digital','file_digital_path',
         'physical_location_id','tags','metadata','is_aktif',
     ];
+    protected array $pgArrayColumns = ['tags'];
+
     protected function casts(): array
     {
         return [

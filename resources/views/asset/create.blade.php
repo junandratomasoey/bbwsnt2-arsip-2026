@@ -8,11 +8,12 @@
 @endsection
 
 @section('content')
-@php $isEdit = isset($asset); @endphp
+@php $isEdit  = isset($asset);
+    $asset = $asset ?? null; @endphp
 
 <div class="max-w-3xl">
 <x-page-header
-    :title="$isEdit ? 'Edit: ' . $asset->nama : 'Tambah Aset Infrastruktur'"
+    :title="$isEdit ? 'Edit: ' . ($asset->nama ?? '') : 'Tambah Aset Infrastruktur'"
     icon="ti-building-bridge" />
 
 <form method="POST"

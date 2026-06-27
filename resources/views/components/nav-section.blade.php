@@ -1,11 +1,14 @@
-{{-- nav-section.blade.php --}}
+{{-- components/nav-section.blade.php --}}
 @props(['label'])
 <div x-show="!sidebarCollapsed"
      x-transition:enter="transition-opacity duration-150"
      x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100">
-    <p class="px-3 pt-5 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
+     x-transition:enter-end="opacity-100"
+     class="pt-4 pb-1 px-2.5">
+    <p class="text-[9px] font-bold uppercase tracking-[0.2em]" style="color: rgba(244,168,29,0.5)">
         {{ $label }}
     </p>
 </div>
-<div x-show="sidebarCollapsed" class="mx-3 my-3 h-px bg-white/10"></div>
+<div x-show="sidebarCollapsed" class="mx-2.5 my-3">
+    <div class="h-px" style="background: rgba(244,168,29,0.2)"></div>
+</div>

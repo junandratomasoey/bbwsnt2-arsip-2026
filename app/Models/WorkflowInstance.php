@@ -29,7 +29,7 @@ class WorkflowInstance extends Model
     public function definition()   { return $this->belongsTo(WorkflowDefinition::class); }
     public function initiatedBy()  { return $this->belongsTo(User::class, 'initiated_by'); }
     public function steps()        { return $this->hasMany(WorkflowStep::class, 'instance_id')->orderBy('acted_at'); }
-    public function latestStep()   { return $this->hasOne(WorkflowStep::class, 'instance_id')->latestOfMany('acted_at'); }
+    public function latestStep()   { return $this->hasOne(WorkflowStep::class, 'instance_id')->orderByDesc('acted_at'); }
 
     public function isActive(): bool    { return $this->status === 'active'; }
     public function isOverdue(): bool   { return $this->due_at?->isPast() && $this->isActive(); }

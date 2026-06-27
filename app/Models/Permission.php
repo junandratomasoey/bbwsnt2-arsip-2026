@@ -10,6 +10,10 @@ class Permission extends SpatiePermission
     public    $incrementing = false;
     protected $keyType      = 'string';
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+
     protected static function boot(): void
     {
         parent::boot();

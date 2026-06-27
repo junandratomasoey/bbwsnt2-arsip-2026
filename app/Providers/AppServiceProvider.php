@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,34 +13,27 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // ── Superadmin bypass semua Gate & Permission check ────────────
+        // Gate::before — cek role langsung dari DB, tidak lewat Spatie cache
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('superadmin')) {
-                return true;
-            }
+            // Query langsung ke tabel tanpa trigger Spatie cache
+            $isSuperAdmin = DB::table('model_has_roles')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->where('model_has_roles.model_uuid', $user->id)
+                ->where('model_has_roles.model_type', get_class($user))
+                ->where('roles.name', 'superadmin')
+                ->exists();
+
+            if ($isSuperAdmin) return true;
         });
 
-        // ── Carbon locale Bahasa Indonesia ─────────────────────────────
         Carbon::setLocale('id');
 
-        // ── Force HTTPS di production ──────────────────────────────────
-        if (app()->environment('production')) {
-            URL::forceScheme('https');
+        // Reset Spatie permission cache
+        try {
+            app(\Spatie\Permission\PermissionRegistrar::class)
+                ->forgetCachedPermissions();
+        } catch (\Throwable $e) {
+            // Abaikan saat migrate
         }
-
-        // ── Log slow queries (> 1 detik) di non-production ────────────
-        if (!app()->environment('production')) {
-            DB::listen(function ($query) {
-                if ($query->time > 1000) {
-                    logger()->warning('Slow query: ' . $query->sql, [
-                        'time'     => $query->time . 'ms',
-                        'bindings' => $query->bindings,
-                    ]);
-                }
-            });
-        }
-
-        // ── Refresh materialized view setiap jam via scheduler ─────────
-        // (Didaftarkan di routes/console.php)
     }
 }

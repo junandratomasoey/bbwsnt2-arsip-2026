@@ -78,7 +78,10 @@ class Asset extends Model
 
     public function kondisiTerbaru()
     {
-        return $this->hasOne(AssetCondition::class)->latestOfMany('tgl_inspeksi');
+        // Gunakan orderBy + limit karena MAX(uuid) tidak didukung PostgreSQL
+        return $this->hasOne(AssetCondition::class)
+                    ->orderByDesc('tgl_inspeksi')
+                    ->orderByDesc('created_at');
     }
 
     public function components()
@@ -178,10 +181,13 @@ class Asset extends Model
         $wajib     = $checklist[$fase] ?? [];
         if (empty($wajib)) return [];
 
+        // doc_type_code ada di tabel document_types (kolom 'kode'), bukan di documents
+        // Perlu join ke document_types untuk filter berdasarkan kode
         $sudahAda = $this->documents()
-            ->whereIn('doc_type_code', $wajib)
-            ->where('status', 'approved')
-            ->pluck('doc_type_code')
+            ->join('document_types', 'documents.document_type_id', '=', 'document_types.id')
+            ->whereIn('document_types.kode', $wajib)
+            ->where('documents.status', 'approved')
+            ->pluck('document_types.kode')
             ->toArray();
 
         return array_values(array_diff($wajib, $sudahAda));

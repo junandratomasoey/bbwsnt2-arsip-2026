@@ -69,7 +69,7 @@ class Project extends Model
 
     public function progressTerbaru()
     {
-        return $this->hasOne(ProjectProgress::class)->latestOfMany('tgl_laporan');
+        return $this->hasOne(ProjectProgress::class)->orderByDesc('tgl_laporan')->orderByDesc('created_at');
     }
 
     public function documents()

@@ -112,7 +112,7 @@ class UnitKerjaController extends Controller
             'tipe'        => 'required|in:balai,bagian,bidang,satker,ppk',
             'nama'        => 'required|string|max:255',
             'singkatan'   => 'nullable|string|max:50',
-            'kode'        => "required|string|max:30|unique:unit_kerja,kode,{$exceptId}",
+            'kode'        => [\Illuminate\Validation\Rule::unique('unit_kerja', 'kode')->when($exceptId, fn($r) => $r->ignore($exceptId))],
             'kepala_nama' => 'nullable|string|max:255',
             'kepala_nip'  => 'nullable|string|max:18',
             'telp'        => 'nullable|string|max:20',

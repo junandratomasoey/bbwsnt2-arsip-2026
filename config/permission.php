@@ -1,9 +1,7 @@
 <?php
 
 return [
-
     'models' => [
-        // Ganti dengan model kustom kita yang pakai UUID
         'permission' => App\Models\Permission::class,
         'role'       => App\Models\Role::class,
     ],
@@ -19,23 +17,20 @@ return [
     'column_names' => [
         'role_pivot_key'       => 'role_id',
         'permission_pivot_key' => 'permission_id',
-
-        // WAJIB diubah ke 'model_uuid' agar cocok dengan migration kita
         'model_morph_key'      => 'model_uuid',
-
         'team_foreign_key'     => 'team_id',
     ],
 
     'register_permission_check_method' => true,
     'register_octane_reset_listener'   => false,
-
-    'teams' => false,
-
-    'vehicles' => [],
+    'teams'   => false,
+    'vehicles'=> [],
 
     'cache' => [
-        'expiration_time'  => \DateInterval::createFromDateString('24 hours'),
-        'key'              => 'spatie.permission.cache',
-        'store'            => 'default',
+        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
+        'key'             => 'spatie.permission.cache',
+        // 'array' = tidak persist → tidak ada cache integer lama
+        // Setelah masalah selesai bisa ganti ke 'default'
+        'store'           => 'array',
     ],
 ];

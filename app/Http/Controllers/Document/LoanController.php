@@ -38,7 +38,12 @@ class LoanController extends Controller
         if ($request->document_id) {
             $dokumen = Document::findOrFail($request->document_id);
         }
-        $documents = Document::aksesibel(auth()->user())->approved()->orderBy('judul')->get();
+        // Ambil semua dokumen tanpa filter klasifikasi
+        // (superadmin dapat semua, user biasa dapat semua dokumen yang ada)
+        $documents = Document::whereIn('status', ['approved', 'review', 'draft'])
+            ->with('documentType')
+            ->orderBy('judul')
+            ->get();
         return view('document.loans.create', compact('documents','dokumen'));
     }
 
