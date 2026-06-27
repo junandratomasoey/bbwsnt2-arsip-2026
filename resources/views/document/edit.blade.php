@@ -8,6 +8,13 @@
 @endsection
 
 @section('content')
+@php
+    $isEdit     = isset($document);
+    $document   = $document ?? null;
+    $entity     = $entity ?? null;
+    $entityType = $entityType ?? null;
+    $entityId   = $entityId ?? null;
+@endphp
 @php $isEdit  = isset($document);
     $document = $document ?? null; @endphp
 <div class="max-w-2xl">

@@ -185,6 +185,7 @@ Route::middleware(['auth', 'verified', 'user.aktif', 'user.not_locked'])->group(
         Route::get('/{document}/qr',              [DocumentController::class, 'qr'])->name('qr');
         Route::get('/{document}/versions',        [DocumentController::class, 'versions'])->name('versions');
         Route::post('/{document}/approve',        [DocumentController::class, 'approve'])->name('approve')->middleware('permission:document.approve');
+        Route::get( '/{document}/new-version',    [DocumentController::class, 'newVersionForm'])->name('new-version.form')->middleware('permission:document.edit');
         Route::post('/{document}/new-version',    [DocumentController::class, 'newVersion'])->name('new-version')->middleware('permission:document.edit');
     });
 

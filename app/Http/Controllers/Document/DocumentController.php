@@ -58,8 +58,15 @@ class DocumentController extends Controller
         $entityId   = $request->entity_id;
         $entity     = null;
         if ($entityType && $entityId) {
-            $modelClass = 'App\\Models\\' . class_basename($entityType);
-            $entity     = $modelClass::find($entityId);
+            // entity_type bisa berupa full class 'App\Models\Asset' atau hanya 'Asset'
+            $modelClass = str_contains($entityType, '\\')
+                ? $entityType
+                : 'App\\Models\\' . $entityType;
+            try {
+                $entity = $modelClass::find($entityId);
+            } catch (\Throwable $e) {
+                $entity = null;
+            }
         }
 
         return view('document.create', compact('docTypes', 'locations', 'unitKerjas', 'entity', 'entityType', 'entityId'));
@@ -181,7 +188,19 @@ class DocumentController extends Controller
         $locations  = PhysicalLocation::orderBy('gedung')->get();
         $unitKerjas = UnitKerja::aktif()->whereIn('tipe', ['satker','ppk'])->orderBy('nama')->get();
 
-        return view('document.create', compact('document', 'docTypes', 'locations', 'unitKerjas'));
+        // Resolve entity yang terlampir pada dokumen ini
+        $entity     = null;
+        $entityType = $document->entity_type;
+        $entityId   = $document->entity_id;
+        if ($entityType && $entityId) {
+            try {
+                $entity = $entityType::find($entityId);
+            } catch (\Throwable $e) {
+                $entity = null;
+            }
+        }
+
+        return view('document.edit', compact('document', 'docTypes', 'locations', 'unitKerjas', 'entity', 'entityType', 'entityId'));
     }
 
     public function update(Request $request, Document $document)
@@ -267,6 +286,12 @@ class DocumentController extends Controller
         return back()->with('success', "Dokumen <strong>{$document->judul}</strong> telah disetujui.");
     }
 
+    public function newVersionForm(Document $document)
+    {
+        $this->cekAkses($document);
+        return view('document.new-version', compact('document'));
+    }
+
     public function newVersion(Request $request, Document $document)
     {
         $request->validate([
@@ -281,7 +306,9 @@ class DocumentController extends Controller
 
             // Buat dokumen baru sebagai versi baru
             $newDoc = $document->replicate([
+                // Exclude kolom yang harus unik atau di-reset
                 'status', 'approved_by', 'approved_at', 'download_count', 'view_count',
+                'qr_code', 'qr_code_path', 'id',
             ]);
             $newDoc->parent_doc_id  = $document->id;
             $newDoc->versi_mayor    = $document->versi_mayor;
@@ -292,6 +319,12 @@ class DocumentController extends Controller
             $newDoc->approved_at    = null;
             $newDoc->download_count = 0;
             $newDoc->view_count     = 0;
+            // Generate QR code baru yang unik
+            do {
+                $newQr = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(10));
+            } while (\App\Models\Document::where('qr_code', $newQr)->exists());
+            $newDoc->qr_code      = $newQr;
+            $newDoc->qr_code_path = null;
             $newDoc->save();
 
             $this->uploadFile($request, $newDoc, true);

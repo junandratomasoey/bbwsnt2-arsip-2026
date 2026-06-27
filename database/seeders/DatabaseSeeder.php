@@ -317,7 +317,7 @@ class AssetTypeSeeder extends Seeder
                 ],
                 'checklist_dokumen_wajib' => [
                     'before' => ['kontrak','gambar_rencana','spesifikasi_teknis','rab','amdal'],
-                    'during' => ['laporan_bulanan','berita_acara_progres'],
+                    'during' => ['laporan_bulanan','berita_acara_serah_terima'],
                     'after'  => ['gambar_asbuilt','berita_acara_serah_terima','laporan_akhir'],
                     'op'     => ['manual_op','laporan_op_bulanan'],
                 ],
