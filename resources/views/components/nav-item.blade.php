@@ -3,8 +3,17 @@
 @props(['route', 'icon', 'label'])
 @php
     try {
-        $active = request()->routeIs(rtrim($route, '.index') . '*')
-               || request()->routeIs($route);
+        // Exact match dulu, lalu wildcard hanya untuk sub-resource (bukan sibling route)
+        $routeName = request()->route()?->getName() ?? '';
+        $baseRoute  = rtrim($route, '.index');
+
+        if ($route === 'dashboard') {
+            // Dashboard hanya aktif jika tepat di dashboard, bukan executive
+            $active = $routeName === 'dashboard';
+        } else {
+            $active = $routeName === $route
+                   || str_starts_with($routeName, $baseRoute . '.');
+        }
     } catch (\Exception $e) {
         $active = false;
     }

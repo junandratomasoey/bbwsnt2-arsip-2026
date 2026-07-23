@@ -117,7 +117,11 @@
         <x-nav-item route="superadmin.unit-kerja.index" icon="ti-sitemap"     label="Unit Kerja" />
         @endcan
         @role('superadmin')
-        <x-nav-item route="superadmin.activity-log"     icon="ti-history"     label="Audit Log" />
+        <x-nav-section label="Data Referensi" />
+        <x-nav-item route="superadmin.asset-types.index"    icon="ti-building-bridge"  label="Jenis Aset" />
+        <x-nav-item route="superadmin.document-types.index" icon="ti-file-description" label="Jenis Dokumen" />
+        <x-nav-item route="superadmin.activity-log"         icon="ti-history"          label="Audit Log" />
+        
         @endrole
     </nav>
 

@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Concerns\HasUuids; // Pastikan pakai trait ini jika di Laravel 9+
 
 class Role extends SpatieRole
 {
+    use HasUuids; // Mengatur otomatis agar UUID di-generate dengan benar
+
+    
     public    $incrementing = false;
     protected $keyType      = 'string';
 
